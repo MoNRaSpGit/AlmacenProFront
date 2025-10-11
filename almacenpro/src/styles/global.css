@@ -6,11 +6,15 @@
 }
 
 /* Fuente y colores por defecto */
+/* styles/global.css */
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f8f9fa; /* gris claro tipo Bootstrap */
-  color: #212529; /* texto oscuro */
+  background-color: #121212 !important; /* negro o azul oscuro */
+  color: #f8f9fa;
+  margin: 0;
+  min-height: 100vh;
 }
+
+
 
 /* Links */
 a {
@@ -29,3 +33,8 @@ h1, h2, h3, h4, h5 {
   margin: 0 auto;
   padding: 1rem;
 }
+
+.position-fixed {
+  position: fixed !important;
+}
+
