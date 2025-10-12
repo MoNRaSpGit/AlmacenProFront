@@ -114,7 +114,10 @@ export default function Caja() {
               <tbody>
                 {movimientos.map((m) => (
                   <tr key={m.id}>
-                    <td>{new Date(m.fecha).toLocaleTimeString()}</td>
+                    <td>
+                      {new Date(m.fecha).toLocaleDateString()} -{" "}
+                      {new Date(m.fecha).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </td>
                     <td>{m.descripcion}</td>
                     <td
                       style={{

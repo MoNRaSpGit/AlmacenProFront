@@ -11,19 +11,27 @@ export default function ScannerPage() {
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const [codigoFaltante, setCodigoFaltante] = useState("");
 
-  const manejarProductoEncontrado = (producto) => {
-    setProductoSeleccionado(producto);
-    setCarrito((prev) => {
-      const index = prev.findIndex((p) => p.barcode === producto.barcode);
-      if (index >= 0) {
-        const actualizado = [...prev];
-        actualizado[index].cantidad += 1;
-        return actualizado;
-      } else {
-        return [...prev, { ...producto, cantidad: 1 }];
-      }
-    });
-  };
+ const manejarProductoEncontrado = (producto) => {
+  setProductoSeleccionado(producto);
+
+  setCarrito((prev) => {
+    const existente = prev.find((p) => p.barcode === producto.barcode);
+
+    // 🧠 Si ya existe el producto en el carrito
+    if (existente) {
+      // ✅ Evitamos doble actualización
+      return prev.map((p) =>
+        p.barcode === producto.barcode
+          ? { ...p, cantidad: (p.cantidad || 0) + 1 }
+          : p
+      );
+    }
+
+    // 🆕 Si es nuevo producto, lo agregamos
+    return [...prev, { ...producto, cantidad: 1 }];
+  });
+};
+
 
   const manejarProductoNoEncontrado = (codigo) => {
     setCodigoFaltante(codigo);

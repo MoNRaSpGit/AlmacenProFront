@@ -1,23 +1,28 @@
-// src/components/EntradaEscaner.jsx
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { obtenerProductoPorCodigo } from "../services/api";
 
 export default function EntradaEscaner({ onProductoEncontrado, onProductoNoEncontrado }) {
   const [codigo, setCodigo] = useState("");
+  const ultimoCodigo = useRef(null); // 👈 guardamos el último código leído
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
-    if (!codigo.trim()) return;
+    const codigoTrim = codigo.trim();
+    if (!codigoTrim) return;
+
+    // Evitamos doble lectura inmediata (por React o scanner)
+    if (ultimoCodigo.current === codigoTrim) return;
+    ultimoCodigo.current = codigoTrim;
 
     try {
-      const producto = await obtenerProductoPorCodigo(codigo.trim());
+      const producto = await obtenerProductoPorCodigo(codigoTrim);
       onProductoEncontrado(producto);
     } catch {
-      // 🔥 antes acá estaba el alert, lo quitamos
-      onProductoNoEncontrado(codigo.trim());
+      onProductoNoEncontrado(codigoTrim);
     }
 
     setCodigo("");
+    setTimeout(() => (ultimoCodigo.current = null), 300); // 👈 libera tras un breve delay
   };
 
   return (
