@@ -24,7 +24,7 @@ export default function ControlStock() {
                         <tr>
                             <th>Producto</th>
                             <th>Cantidad Vendida</th>
-                            <th>Última Venta</th>
+                            <th>Últimas Venta</th>
                         </tr>
                     </thead>
                     <tbody>
