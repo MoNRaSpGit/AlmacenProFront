@@ -1,6 +1,5 @@
 // src/App.jsx
-import { Routes, Route, NavLink } from "react-router-dom";
-import Inicio from "./pages/Inicio";
+import { Routes, Route, NavLink, Navigate } from "react-router-dom";
 import ScannerPage from "./pages/ScannerPage";
 import Caja from "./pages/Caja";
 import Pagos from "./pages/Pagos";
@@ -12,7 +11,7 @@ export default function App() {
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <NavLink className="navbar-brand" to="/">AlmacénPro</NavLink>
+          
 
           <button
             className="navbar-toggler"
@@ -28,9 +27,7 @@ export default function App() {
 
           <div id="nav" className="collapse navbar-collapse">
             <ul className="navbar-nav me-auto">
-              <li className="nav-item">
-                <NavLink className={linkClass} to="/">Inicio</NavLink>
-              </li>
+            
               <li className="nav-item">
                 <NavLink className={linkClass} to="/scanner">Escáner</NavLink>
               </li>
@@ -48,11 +45,12 @@ export default function App() {
       {/* Si querés tu propio ancho, usá container-app en vez de .container */}
       <div className="container-app py-4">
         <Routes>
-          <Route path="/" element={<Inicio />} />
+          <Route path="/" element={<Navigate to="/scanner" replace />} />
           <Route path="/scanner" element={<ScannerPage />} />
           <Route path="/caja" element={<Caja />} />
           <Route path="/pagos" element={<Pagos />} />
         </Routes>
+
       </div>
     </div>
   );

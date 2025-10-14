@@ -61,9 +61,10 @@ export async function registrarPagoCaja(nombre, monto) {
 }
 
 export async function obtenerPagosCaja() {
-  const res = await axios.get(`${API_URL}/api/caja/pagos`);
+  const res = await axios.get(`${API_URL}/api/pagos`);
   return res.data;
 }
+
 
 // =====================
 // 📊 Movimientos de Caja
