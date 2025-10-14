@@ -113,6 +113,7 @@ export default function ScannerPage() {
       manejarPagar={manejarPagar}
       calcularTotal={calcularTotal}
       manejarAgregarManual={manejarAgregarManual} // 👈 agregado
+       volverAFocoEscaner={() => {}}
     />
   );
 }

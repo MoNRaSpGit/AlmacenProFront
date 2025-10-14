@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import EntradaEscaner from "../components/EntradaEscaner";
 import TarjetaProducto from "../components/TarjetaProducto";
 import TarjetaIngresarProducto from "../components/TarjetaIngresarProducto";
@@ -15,10 +15,32 @@ export default function ScannerView({
   manejarEliminar,
   manejarPagar,
   calcularTotal,
-  manejarAgregarManual, // 👈 NUEVO PROP RECIBIDO
+  manejarAgregarManual,
+  
 }) {
   const [precioManual, setPrecioManual] = useState("");
   const [mostrarInput, setMostrarInput] = useState(false);
+
+  // 🧠 refs para manejo de foco
+  const inputPrecioRef = useRef(null);
+  const inputEscanerRef = useRef(null);
+
+  // Cuando se abre la página, el cursor va al escáner
+  useEffect(() => {
+    inputEscanerRef.current?.focus();
+  }, []);
+
+  // Cuando se abre el input manual, enfoca automáticamente el campo del precio
+  useEffect(() => {
+    if (mostrarInput) {
+      setTimeout(() => inputPrecioRef.current?.focus(), 100);
+    }
+  }, [mostrarInput]);
+
+  // ✅ Función auxiliar para volver el foco al escáner
+  const volverAFocoEscaner = () => {
+    setTimeout(() => inputEscanerRef.current?.focus(), 150);
+  };
 
   return (
     <>
@@ -29,6 +51,7 @@ export default function ScannerView({
         <div className="row justify-content-center mb-4">
           <div className="col-md-6">
             <EntradaEscaner
+              inputRef={inputEscanerRef} // 👈 pasamos la referencia
               onProductoEncontrado={manejarProductoEncontrado}
               onProductoNoEncontrado={manejarProductoNoEncontrado}
             />
@@ -45,6 +68,7 @@ export default function ScannerView({
               ) : (
                 <div className="input-group w-75">
                   <input
+                    ref={inputPrecioRef} // 👈 ref para enfocar automáticamente
                     type="number"
                     className="form-control"
                     placeholder="Precio"
@@ -54,16 +78,21 @@ export default function ScannerView({
                   <button
                     className="btn btn-success"
                     onClick={() => {
-                      manejarAgregarManual(precioManual); // 👈 SE USA AQUÍ
+                      manejarAgregarManual(precioManual);
                       setPrecioManual("");
                       setMostrarInput(false);
+                      volverAFocoEscaner(); // 👈 vuelve al escáner
                     }}
                   >
                     ✅
                   </button>
                   <button
                     className="btn btn-secondary"
-                    onClick={() => setMostrarInput(false)}
+                    onClick={() => {
+                      setMostrarInput(false);
+                      setPrecioManual("");
+                      volverAFocoEscaner(); // 👈 vuelve al escáner
+                    }}
                   >
                     ❌
                   </button>
@@ -143,9 +172,16 @@ export default function ScannerView({
                 </table>
 
                 <div className="text-end mt-3">
-                  <button className="btn btn-success btn-lg" onClick={manejarPagar}>
+                  <button
+                    className="btn btn-success btn-lg"
+                    onClick={async () => {
+                      await manejarPagar();
+                      volverAFocoEscaner(); // 👈 usamos la función local (ya existe)
+                    }}
+                  >
                     💳 Pagar
                   </button>
+
                 </div>
               </>
             )}
