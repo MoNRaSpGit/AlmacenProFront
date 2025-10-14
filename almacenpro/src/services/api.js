@@ -50,10 +50,11 @@ export async function cerrarCaja() {
   return res.data;
 }
 
-export async function registrarVenta(monto) {
-  const res = await axios.post(`${API_URL}/api/caja/venta`, { monto });
+export async function registrarVenta(monto, productos) {
+  const res = await axios.post(`${API_URL}/api/caja/venta`, { monto, productos });
   return res.data;
 }
+
 
 export async function registrarPagoCaja(nombre, monto) {
   const res = await axios.post(`${API_URL}/api/caja/pago`, { nombre, monto });

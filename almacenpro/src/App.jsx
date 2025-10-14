@@ -3,6 +3,7 @@ import { Routes, Route, NavLink, Navigate } from "react-router-dom";
 import ScannerPage from "./pages/ScannerPage";
 import Caja from "./pages/Caja";
 import Pagos from "./pages/Pagos";
+import ControlStock from "./pages/ControlStock";
 
 export default function App() {
   const linkClass = ({ isActive }) => "nav-link" + (isActive ? " active" : "");
@@ -11,7 +12,7 @@ export default function App() {
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          
+
 
           <button
             className="navbar-toggler"
@@ -27,7 +28,7 @@ export default function App() {
 
           <div id="nav" className="collapse navbar-collapse">
             <ul className="navbar-nav me-auto">
-            
+
               <li className="nav-item">
                 <NavLink className={linkClass} to="/scanner">Escáner</NavLink>
               </li>
@@ -36,6 +37,9 @@ export default function App() {
               </li>
               <li className="nav-item">
                 <NavLink className={linkClass} to="/pagos">Pagos</NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink className={linkClass} to="/stock">Stock</NavLink>
               </li>
             </ul>
           </div>
@@ -49,6 +53,8 @@ export default function App() {
           <Route path="/scanner" element={<ScannerPage />} />
           <Route path="/caja" element={<Caja />} />
           <Route path="/pagos" element={<Pagos />} />
+          <Route path="/stock" element={<ControlStock />} />
+
         </Routes>
 
       </div>

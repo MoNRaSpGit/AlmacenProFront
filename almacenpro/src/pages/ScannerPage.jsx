@@ -83,7 +83,15 @@ export default function ScannerPage() {
     const total = calcularTotal();
     if (total > 0) {
       try {
-        await registrarVenta(total);
+        // Mapeamos los productos del carrito para enviar al backend
+        const productosFormateados = carrito.map((p) => ({
+          id: p.id || null, // si no tiene id, lo mandamos null o barcode
+          cantidad: p.cantidad,
+          precio: p.price,
+        }));
+
+        await registrarVenta(total, productosFormateados);
+
         setCarrito([]);
         setProductoSeleccionado(null);
         setNotificacion({
@@ -99,19 +107,26 @@ export default function ScannerPage() {
     }
   };
 
+
   // 🧾 Agregar producto manual (sin notificación)
+  // 👇 ID del producto manual genérico en la base (cambiá este valor según el tuyo)
+  const ID_PRODUCTO_MANUAL = 1689;
+
   const manejarAgregarManual = (precio) => {
     if (!precio || precio <= 0) return alert("Ingrese un precio válido");
 
     const productoManual = {
+      id: ID_PRODUCTO_MANUAL,
       name: "Producto manual",
       price: Number(precio),
-      barcode: "manual-" + Date.now(),
+      barcode: "manual",
       cantidad: 1,
     };
 
     setCarrito((prev) => [...prev, productoManual]);
   };
+
+
 
   return (
     <>
@@ -128,7 +143,7 @@ export default function ScannerPage() {
         manejarPagar={manejarPagar}
         calcularTotal={calcularTotal}
         manejarAgregarManual={manejarAgregarManual}
-        volverAFocoEscaner={() => {}}
+        volverAFocoEscaner={() => { }}
       />
 
       {/* 🟢 Notificación flotante solo al pagar */}
