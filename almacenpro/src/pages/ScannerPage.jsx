@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { registrarVenta, crearProductoRapido } from "../services/api";
 import ScannerView from "../views/ScannerView";
-
+import Notificacion from "../components/Notificacion";
 
 export default function ScannerPage() {
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [carrito, setCarrito] = useState([]);
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const [codigoFaltante, setCodigoFaltante] = useState("");
+  const [notificacion, setNotificacion] = useState(null);
 
+  // ✅ Producto encontrado
   const manejarProductoEncontrado = (producto) => {
     setProductoSeleccionado(producto);
     setCarrito((prev) => {
@@ -24,11 +26,13 @@ export default function ScannerPage() {
     });
   };
 
+  // ❌ Producto no encontrado
   const manejarProductoNoEncontrado = (codigo) => {
     setCodigoFaltante(codigo);
     setMostrarTarjeta(true);
   };
 
+  // 🆕 Guardar nuevo producto
   const manejarGuardarProductoNuevo = async ({ nombre, precio, codigo }) => {
     try {
       await crearProductoRapido(nombre, precio, codigo);
@@ -43,15 +47,17 @@ export default function ScannerPage() {
       setCodigoFaltante(null);
     } catch (err) {
       console.error("Error guardando producto rápido:", err);
-      alert("Error guardando el producto");
+      alert("❌ Error guardando el producto");
     }
   };
 
+  // 🔙 Cancelar
   const manejarCancelar = () => {
     setMostrarTarjeta(false);
     setCodigoFaltante("");
   };
 
+  // 🗑️ Eliminar producto o reducir cantidad
   const manejarEliminar = (barcode) => {
     setCarrito((prev) => {
       const index = prev.findIndex((p) => p.barcode === barcode);
@@ -68,52 +74,71 @@ export default function ScannerPage() {
     });
   };
 
+  // 💰 Calcular total
   const calcularTotal = () =>
     carrito.reduce((total, p) => total + Number(p.price || 0) * p.cantidad, 0);
 
+  // 💳 Pagar
   const manejarPagar = async () => {
     const total = calcularTotal();
     if (total > 0) {
       try {
         await registrarVenta(total);
-        alert(`✅ Pago registrado: $${total.toFixed(2)}`);
         setCarrito([]);
         setProductoSeleccionado(null);
+        setNotificacion({
+          mensaje: `✅ Pago registrado: $${total.toFixed(2)}`,
+          tipo: "exito",
+        });
       } catch {
-        alert("❌ Error registrando la venta");
+        setNotificacion({
+          mensaje: "❌ Error registrando la venta",
+          tipo: "error",
+        });
       }
     }
   };
 
+  // 🧾 Agregar producto manual (sin notificación)
   const manejarAgregarManual = (precio) => {
-  if (!precio || precio <= 0) return alert("Ingrese un precio válido");
+    if (!precio || precio <= 0) return alert("Ingrese un precio válido");
 
-  const productoManual = {
-    name: "Producto manual",
-    price: Number(precio),
-    barcode: "manual-" + Date.now(),
-    cantidad: 1,
+    const productoManual = {
+      name: "Producto manual",
+      price: Number(precio),
+      barcode: "manual-" + Date.now(),
+      cantidad: 1,
+    };
+
+    setCarrito((prev) => [...prev, productoManual]);
   };
 
-  setCarrito((prev) => [...prev, productoManual]);
-};
-
-
   return (
-    <ScannerView
-      productoSeleccionado={productoSeleccionado}
-      carrito={carrito}
-      mostrarTarjeta={mostrarTarjeta}
-      codigoFaltante={codigoFaltante}
-      manejarProductoEncontrado={manejarProductoEncontrado}
-      manejarProductoNoEncontrado={manejarProductoNoEncontrado}
-      manejarGuardarProductoNuevo={manejarGuardarProductoNuevo}
-      manejarCancelar={manejarCancelar}
-      manejarEliminar={manejarEliminar}
-      manejarPagar={manejarPagar}
-      calcularTotal={calcularTotal}
-      manejarAgregarManual={manejarAgregarManual} // 👈 agregado
-       volverAFocoEscaner={() => {}}
-    />
+    <>
+      <ScannerView
+        productoSeleccionado={productoSeleccionado}
+        carrito={carrito}
+        mostrarTarjeta={mostrarTarjeta}
+        codigoFaltante={codigoFaltante}
+        manejarProductoEncontrado={manejarProductoEncontrado}
+        manejarProductoNoEncontrado={manejarProductoNoEncontrado}
+        manejarGuardarProductoNuevo={manejarGuardarProductoNuevo}
+        manejarCancelar={manejarCancelar}
+        manejarEliminar={manejarEliminar}
+        manejarPagar={manejarPagar}
+        calcularTotal={calcularTotal}
+        manejarAgregarManual={manejarAgregarManual}
+        volverAFocoEscaner={() => {}}
+      />
+
+      {/* 🟢 Notificación flotante solo al pagar */}
+      {notificacion && (
+        <Notificacion
+          mensaje={notificacion.mensaje}
+          tipo={notificacion.tipo}
+          onClose={() => setNotificacion(null)}
+        />
+      )}
+    </>
   );
 }
