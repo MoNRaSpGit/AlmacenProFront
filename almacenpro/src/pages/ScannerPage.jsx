@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { registrarVenta, crearProductoRapido } from "../services/api";
+import {
+  connectQZ,
+  getDefaultPrinter,
+  printTestTicket,
+  printWithRawBT,
+} from "../services/printService";
 import ScannerView from "../views/ScannerView";
 import Notificacion from "../components/Notificacion";
-
-// 🧾 Importamos el servicio de impresión
-import { printTestTicket, getDefaultPrinter, connectQZ } from "../services/printService";
 
 export default function ScannerPage() {
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
@@ -12,6 +15,9 @@ export default function ScannerPage() {
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
   const [codigoFaltante, setCodigoFaltante] = useState("");
   const [notificacion, setNotificacion] = useState(null);
+
+  // ✅ Detectar si es Android (para RawBT)
+  const isAndroid = () => /Android/i.test(navigator.userAgent);
 
   // ✅ Producto encontrado
   const manejarProductoEncontrado = (producto) => {
@@ -54,7 +60,7 @@ export default function ScannerPage() {
     }
   };
 
-  // 🔙 Cancelar ingreso manual
+  // 🔙 Cancelar
   const manejarCancelar = () => {
     setMostrarTarjeta(false);
     setCodigoFaltante("");
@@ -77,11 +83,13 @@ export default function ScannerPage() {
     });
   };
 
-  // 🔢 Cambiar cantidad desde botones o input
+  // 🔢 Cambiar cantidad desde botones ➕ / ➖
   const manejarCambioCantidad = (barcode, nuevaCantidad) => {
     setCarrito((prev) =>
       prev.map((p) =>
-        p.barcode === barcode ? { ...p, cantidad: nuevaCantidad } : p
+        p.barcode === barcode
+          ? { ...p, cantidad: Math.max(1, nuevaCantidad) }
+          : p
       )
     );
   };
@@ -90,45 +98,60 @@ export default function ScannerPage() {
   const calcularTotal = () =>
     carrito.reduce((total, p) => total + Number(p.price || 0) * p.cantidad, 0);
 
-  // 💳 Pagar + imprimir ticket
+  // 💳 Pagar + imprimir (QZ Tray o RawBT)
   const manejarPagar = async () => {
     const total = calcularTotal();
-    if (total > 0) {
-      try {
-        // 🧾 Guardar venta en backend
-        const productosFormateados = carrito.map((p) => ({
-          id: p.id || null,
-          cantidad: p.cantidad,
-          precio: p.price,
-        }));
+    if (total <= 0) return;
 
-        await registrarVenta(total, productosFormateados);
+    try {
+      const productosFormateados = carrito.map((p) => ({
+        id: p.id || null,
+        cantidad: p.cantidad,
+        precio: p.price,
+      }));
 
-        // 🧾 Armar lista de productos para imprimir
-        const listaTicket = carrito.map((p) => ({
-          nombre: `${p.name} x${p.cantidad}`,
-          precio: `$${(p.price * p.cantidad).toFixed(2)}`,
-        }));
+      // Registrar venta en backend
+      await registrarVenta(total, productosFormateados);
 
-        // Imprimir con QZ
+      // Preparar lista para imprimir
+      const listaTicket = carrito.map((p) => ({
+        nombre: `${p.name} x${p.cantidad}`,
+        precio: `$${(p.price * p.cantidad).toFixed(2)}`,
+      }));
+
+      if (isAndroid()) {
+        // 📱 RAWBT: Ticket en texto simple
+        const texto = [
+          "        KIOSCO PILOTO\n",
+          "   Tacuarembó - Uruguay\n",
+          "-------------------------------",
+          ...listaTicket.map((p) => `${p.nombre}\n        ${p.precio}`),
+          "-------------------------------",
+          `TOTAL: $${total.toFixed(2)}\n`,
+          "\nGracias por su compra!\n\n\n",
+        ].join("\n");
+
+        printWithRawBT(texto);
+      } else {
+        // 💻 QZ Tray (PC)
         await connectQZ();
         const printer = await getDefaultPrinter();
         await printTestTicket(printer, listaTicket);
-
-        // Limpiar carrito y mostrar notificación
-        setCarrito([]);
-        setProductoSeleccionado(null);
-        setNotificacion({
-          mensaje: `✅ Pago registrado e impreso: $${total.toFixed(2)}`,
-          tipo: "exito",
-        });
-      } catch (err) {
-        console.error(err);
-        setNotificacion({
-          mensaje: "❌ Error registrando la venta o imprimiendo",
-          tipo: "error",
-        });
       }
+
+      // Limpiar carrito y mostrar confirmación
+      setCarrito([]);
+      setProductoSeleccionado(null);
+      setNotificacion({
+        mensaje: `✅ Pago registrado e impreso: $${total.toFixed(2)}`,
+        tipo: "exito",
+      });
+    } catch (err) {
+      console.error("❌ Error registrando o imprimiendo:", err);
+      setNotificacion({
+        mensaje: "❌ Error registrando la venta o imprimiendo",
+        tipo: "error",
+      });
     }
   };
 
@@ -158,7 +181,7 @@ export default function ScannerPage() {
         manejarGuardarProductoNuevo={manejarGuardarProductoNuevo}
         manejarCancelar={manejarCancelar}
         manejarEliminar={manejarEliminar}
-        manejarCambioCantidad={manejarCambioCantidad} // ✅ se volvió a pasar
+        manejarCambioCantidad={manejarCambioCantidad}
         manejarPagar={manejarPagar}
         calcularTotal={calcularTotal}
         manejarAgregarManual={manejarAgregarManual}

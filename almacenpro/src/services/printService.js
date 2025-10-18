@@ -137,3 +137,24 @@ export async function printTestTicket(printerName = null, items = []) {
     alert("Error al imprimir con QZ Tray. Verificá la conexión.");
   }
 }
+
+
+// ==============================
+// 📱 Función para imprimir con RawBT
+// ==============================
+export function printWithRawBT(ticketTexto) {
+  try {
+    // Escapamos caracteres especiales
+    const encoded = encodeURIComponent(ticketTexto);
+
+    // Creamos la URL tipo intent:// que abre RawBT
+    const rawbtUrl = `intent://rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
+
+    // Abrimos RawBT
+    window.location.href = rawbtUrl;
+  } catch (error) {
+    console.error("❌ Error enviando a RawBT:", error);
+    alert("Error al imprimir con RawBT");
+  }
+}
+
