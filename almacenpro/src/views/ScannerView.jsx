@@ -38,7 +38,7 @@ export default function ScannerView({
   return (
     <>
       <div className="container-fluid min-vh-100 bg-dark text-light py-4">
-        <h1 className="text-center mb-4">🛒 Escáner de Supermercado</h1>
+        <h1 className="text-center mb-4">🛒 Escáner des Supermercado</h1>
 
         <div className="row justify-content-center mb-4">
           <div className="col-md-6">
