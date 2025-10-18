@@ -16,28 +16,25 @@ export default function ScannerView({
   manejarPagar,
   calcularTotal,
   manejarAgregarManual,
-  
+  manejarEditarCantidad,
+  manejarCambioTemporal,
+  manejarConfirmarCantidad,
 }) {
   const [precioManual, setPrecioManual] = useState("");
   const [mostrarInput, setMostrarInput] = useState(false);
-
-  // 🧠 refs para manejo de foco
   const inputPrecioRef = useRef(null);
   const inputEscanerRef = useRef(null);
 
-  // Cuando se abre la página, el cursor va al escáner
   useEffect(() => {
     inputEscanerRef.current?.focus();
   }, []);
 
-  // Cuando se abre el input manual, enfoca automáticamente el campo del precio
   useEffect(() => {
     if (mostrarInput) {
       setTimeout(() => inputPrecioRef.current?.focus(), 100);
     }
   }, [mostrarInput]);
 
-  // ✅ Función auxiliar para volver el foco al escáner
   const volverAFocoEscaner = () => {
     setTimeout(() => inputEscanerRef.current?.focus(), 150);
   };
@@ -47,16 +44,15 @@ export default function ScannerView({
       <div className="container-fluid min-vh-100 bg-dark text-light py-4">
         <h1 className="text-center mb-4">🛒 Escáner de Supermercado</h1>
 
-        {/* Entrada del escáner */}
         <div className="row justify-content-center mb-4">
           <div className="col-md-6">
             <EntradaEscaner
-              inputRef={inputEscanerRef} // 👈 pasamos la referencia
+              inputRef={inputEscanerRef}
               onProductoEncontrado={manejarProductoEncontrado}
               onProductoNoEncontrado={manejarProductoNoEncontrado}
             />
 
-            {/* 🆕 BOTÓN / INPUT MANUAL */}
+            {/* Agregar producto manual */}
             <div className="d-flex justify-content-center mt-3">
               {!mostrarInput ? (
                 <button
@@ -68,7 +64,7 @@ export default function ScannerView({
               ) : (
                 <div className="input-group w-75">
                   <input
-                    ref={inputPrecioRef} // 👈 ref para enfocar automáticamente
+                    ref={inputPrecioRef}
                     type="number"
                     className="form-control"
                     placeholder="Precio"
@@ -81,7 +77,7 @@ export default function ScannerView({
                       manejarAgregarManual(precioManual);
                       setPrecioManual("");
                       setMostrarInput(false);
-                      volverAFocoEscaner(); // 👈 vuelve al escáner
+                      volverAFocoEscaner();
                     }}
                   >
                     ✅
@@ -91,7 +87,7 @@ export default function ScannerView({
                     onClick={() => {
                       setMostrarInput(false);
                       setPrecioManual("");
-                      volverAFocoEscaner(); // 👈 vuelve al escáner
+                      volverAFocoEscaner();
                     }}
                   >
                     ❌
@@ -102,14 +98,14 @@ export default function ScannerView({
           </div>
         </div>
 
-        {/* Tarjeta del producto seleccionado */}
+        {/* Producto actual */}
         <div className="row justify-content-center mb-5">
           <div className="col-md-4">
             <TarjetaProducto producto={productoSeleccionado} />
           </div>
         </div>
 
-        {/* Lista del carrito */}
+        {/* Carrito */}
         <div className="row">
           <div className="col-md-10 mx-auto">
             <h3>Lista de productos</h3>
@@ -146,7 +142,41 @@ export default function ScannerView({
                         </td>
                         <td>{p.name}</td>
                         <td>${p.price}</td>
-                        <td>{p.cantidad}</td>
+
+                        {/* 👇 Celda editable de cantidad */}
+                        <td>
+                          {p.editando ? (
+                            <div className="d-flex align-items-center gap-2">
+                              <input
+                                type="number"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                min="1"
+                                value={p.cantidadTemp || p.cantidad}
+                                onChange={(e) =>
+                                  manejarCambioTemporal(p.barcode, e.target.value)
+                                }
+                                className="form-control form-control-sm text-center"
+                                style={{ width: "80px" }}
+                                autoFocus
+                              />
+                              <button
+                                className="btn btn-success btn-sm"
+                                onClick={() => manejarConfirmarCantidad(p.barcode)}
+                              >
+                                ✅
+                              </button>
+                            </div>
+                          ) : (
+                            <div
+                              onClick={() => manejarEditarCantidad(p.barcode)}
+                              style={{ cursor: "pointer", userSelect: "none" }}
+                            >
+                              {p.cantidad} ✏️
+                            </div>
+                          )}
+                        </td>
+
                         <td>${(p.price * p.cantidad).toFixed(2)}</td>
                         <td>
                           <button
@@ -159,6 +189,7 @@ export default function ScannerView({
                       </tr>
                     ))}
                   </tbody>
+
                   <tfoot>
                     <tr>
                       <td colSpan="4" className="text-end">
@@ -176,12 +207,11 @@ export default function ScannerView({
                     className="btn btn-success btn-lg"
                     onClick={async () => {
                       await manejarPagar();
-                      volverAFocoEscaner(); // 👈 usamos la función local (ya existe)
+                      volverAFocoEscaner();
                     }}
                   >
                     💳 Pagar
                   </button>
-
                 </div>
               </>
             )}
@@ -189,7 +219,6 @@ export default function ScannerView({
         </div>
       </div>
 
-      {/* Tarjeta de ingreso de producto nuevo */}
       {mostrarTarjeta && (
         <TarjetaIngresarProducto
           codigo={codigoFaltante}

@@ -74,6 +74,42 @@ export default function ScannerPage() {
     });
   };
 
+  // ✏️ Editar cantidad (modo tablet)
+  const manejarEditarCantidad = (barcode) => {
+    setCarrito((prev) =>
+      prev.map((p) =>
+        p.barcode === barcode
+          ? { ...p, editando: true, cantidadTemp: p.cantidad }
+          : p
+      )
+    );
+  };
+
+  const manejarCambioTemporal = (barcode, valor) => {
+    const num = Number(valor);
+    if (isNaN(num) || num < 0) return;
+    setCarrito((prev) =>
+      prev.map((p) =>
+        p.barcode === barcode ? { ...p, cantidadTemp: num } : p
+      )
+    );
+  };
+
+  const manejarConfirmarCantidad = (barcode) => {
+    setCarrito((prev) =>
+      prev.map((p) =>
+        p.barcode === barcode
+          ? {
+              ...p,
+              cantidad: p.cantidadTemp > 0 ? p.cantidadTemp : p.cantidad,
+              editando: false,
+              cantidadTemp: undefined,
+            }
+          : p
+      )
+    );
+  };
+
   // 💰 Calcular total
   const calcularTotal = () =>
     carrito.reduce((total, p) => total + Number(p.price || 0) * p.cantidad, 0);
@@ -83,9 +119,8 @@ export default function ScannerPage() {
     const total = calcularTotal();
     if (total > 0) {
       try {
-        // Mapeamos los productos del carrito para enviar al backend
         const productosFormateados = carrito.map((p) => ({
-          id: p.id || null, // si no tiene id, lo mandamos null o barcode
+          id: p.id || null,
           cantidad: p.cantidad,
           precio: p.price,
         }));
@@ -107,14 +142,10 @@ export default function ScannerPage() {
     }
   };
 
-
-  // 🧾 Agregar producto manual (sin notificación)
-  // 👇 ID del producto manual genérico en la base (cambiá este valor según el tuyo)
+  // 🧾 Producto manual
   const ID_PRODUCTO_MANUAL = 1689;
-
   const manejarAgregarManual = (precio) => {
     if (!precio || precio <= 0) return alert("Ingrese un precio válido");
-
     const productoManual = {
       id: ID_PRODUCTO_MANUAL,
       name: "Producto manual",
@@ -122,11 +153,8 @@ export default function ScannerPage() {
       barcode: "manual",
       cantidad: 1,
     };
-
     setCarrito((prev) => [...prev, productoManual]);
   };
-
-
 
   return (
     <>
@@ -143,10 +171,11 @@ export default function ScannerPage() {
         manejarPagar={manejarPagar}
         calcularTotal={calcularTotal}
         manejarAgregarManual={manejarAgregarManual}
-        volverAFocoEscaner={() => { }}
+        manejarEditarCantidad={manejarEditarCantidad}
+        manejarCambioTemporal={manejarCambioTemporal}
+        manejarConfirmarCantidad={manejarConfirmarCantidad}
       />
 
-      {/* 🟢 Notificación flotante solo al pagar */}
       {notificacion && (
         <Notificacion
           mensaje={notificacion.mensaje}
