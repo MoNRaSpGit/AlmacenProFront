@@ -143,22 +143,31 @@ export default function ScannerView({
                         <td>{p.name}</td>
                         <td>${p.price}</td>
 
-                        {/* 👇 Celda editable de cantidad */}
                         <td>
                           {p.editando ? (
                             <div className="d-flex align-items-center gap-2">
                               <input
+                                ref={(el) => {
+                                  // 👇 Enfoca automáticamente para abrir teclado táctil
+                                  if (el) {
+                                    setTimeout(() => el.focus(), 50);
+                                  }
+                                }}
                                 type="number"
                                 inputMode="numeric"
                                 pattern="[0-9]*"
                                 min="1"
-                                value={p.cantidadTemp || p.cantidad}
-                                onChange={(e) =>
-                                  manejarCambioTemporal(p.barcode, e.target.value)
-                                }
                                 className="form-control form-control-sm text-center"
-                                style={{ width: "80px" }}
-                                autoFocus
+                                style={{ width: "90px", fontSize: "1.2rem" }}
+                                value={p.cantidadTemp ?? p.cantidad}
+                                onChange={(e) => {
+                                  // 👇 Permite dejar vacío mientras escribe
+                                  const val = e.target.value;
+                                  manejarCambioTemporal(p.barcode, val === "" ? "" : Number(val));
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") manejarConfirmarCantidad(p.barcode);
+                                }}
                               />
                               <button
                                 className="btn btn-success btn-sm"
@@ -170,13 +179,16 @@ export default function ScannerView({
                           ) : (
                             <div
                               onClick={() => manejarEditarCantidad(p.barcode)}
-                              style={{ cursor: "pointer", userSelect: "none" }}
+                              style={{
+                                cursor: "pointer",
+                                userSelect: "none",
+                                fontSize: "1.2rem",
+                              }}
                             >
                               {p.cantidad} ✏️
                             </div>
                           )}
                         </td>
-
                         <td>${(p.price * p.cantidad).toFixed(2)}</td>
                         <td>
                           <button
