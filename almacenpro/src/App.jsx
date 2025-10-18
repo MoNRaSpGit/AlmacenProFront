@@ -4,6 +4,8 @@ import ScannerPage from "./pages/ScannerPage";
 import Caja from "./pages/Caja";
 import Pagos from "./pages/Pagos";
 import ControlStock from "./pages/ControlStock";
+import ImprimirQZ from "./pages/ImprimirQZ";
+
 
 export default function App() {
   const linkClass = ({ isActive }) => "nav-link" + (isActive ? " active" : "");
@@ -41,6 +43,9 @@ export default function App() {
               <li className="nav-item">
                 <NavLink className={linkClass} to="/stock">Stock</NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink className={linkClass} to="/imprimir">Impresión</NavLink>
+              </li>
             </ul>
           </div>
         </div>
@@ -54,6 +59,8 @@ export default function App() {
           <Route path="/caja" element={<Caja />} />
           <Route path="/pagos" element={<Pagos />} />
           <Route path="/stock" element={<ControlStock />} />
+          <Route path="/imprimir" element={<ImprimirQZ />} />
+
 
         </Routes>
 

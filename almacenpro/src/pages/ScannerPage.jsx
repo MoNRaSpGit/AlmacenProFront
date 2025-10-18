@@ -3,6 +3,9 @@ import { registrarVenta, crearProductoRapido } from "../services/api";
 import ScannerView from "../views/ScannerView";
 import Notificacion from "../components/Notificacion";
 
+// 🧾 Importamos el servicio de impresión
+import { printTestTicket, getDefaultPrinter, connectQZ } from "../services/printService";
+
 export default function ScannerPage() {
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [carrito, setCarrito] = useState([]);
@@ -51,7 +54,7 @@ export default function ScannerPage() {
     }
   };
 
-  // 🔙 Cancelar
+  // 🔙 Cancelar ingreso manual
   const manejarCancelar = () => {
     setMostrarTarjeta(false);
     setCodigoFaltante("");
@@ -74,13 +77,11 @@ export default function ScannerPage() {
     });
   };
 
-  // 🔢 Cambiar cantidad desde botones ➕ / ➖
+  // 🔢 Cambiar cantidad desde botones o input
   const manejarCambioCantidad = (barcode, nuevaCantidad) => {
     setCarrito((prev) =>
       prev.map((p) =>
-        p.barcode === barcode
-          ? { ...p, cantidad: nuevaCantidad }
-          : p
+        p.barcode === barcode ? { ...p, cantidad: nuevaCantidad } : p
       )
     );
   };
@@ -89,11 +90,12 @@ export default function ScannerPage() {
   const calcularTotal = () =>
     carrito.reduce((total, p) => total + Number(p.price || 0) * p.cantidad, 0);
 
-  // 💳 Pagar
+  // 💳 Pagar + imprimir ticket
   const manejarPagar = async () => {
     const total = calcularTotal();
     if (total > 0) {
       try {
+        // 🧾 Guardar venta en backend
         const productosFormateados = carrito.map((p) => ({
           id: p.id || null,
           cantidad: p.cantidad,
@@ -101,15 +103,29 @@ export default function ScannerPage() {
         }));
 
         await registrarVenta(total, productosFormateados);
+
+        // 🧾 Armar lista de productos para imprimir
+        const listaTicket = carrito.map((p) => ({
+          nombre: `${p.name} x${p.cantidad}`,
+          precio: `$${(p.price * p.cantidad).toFixed(2)}`,
+        }));
+
+        // Imprimir con QZ
+        await connectQZ();
+        const printer = await getDefaultPrinter();
+        await printTestTicket(printer, listaTicket);
+
+        // Limpiar carrito y mostrar notificación
         setCarrito([]);
         setProductoSeleccionado(null);
         setNotificacion({
-          mensaje: `✅ Pago registrado: $${total.toFixed(2)}`,
+          mensaje: `✅ Pago registrado e impreso: $${total.toFixed(2)}`,
           tipo: "exito",
         });
-      } catch {
+      } catch (err) {
+        console.error(err);
         setNotificacion({
-          mensaje: "❌ Error registrando la venta",
+          mensaje: "❌ Error registrando la venta o imprimiendo",
           tipo: "error",
         });
       }
@@ -142,7 +158,7 @@ export default function ScannerPage() {
         manejarGuardarProductoNuevo={manejarGuardarProductoNuevo}
         manejarCancelar={manejarCancelar}
         manejarEliminar={manejarEliminar}
-        manejarCambioCantidad={manejarCambioCantidad}
+        manejarCambioCantidad={manejarCambioCantidad} // ✅ se volvió a pasar
         manejarPagar={manejarPagar}
         calcularTotal={calcularTotal}
         manejarAgregarManual={manejarAgregarManual}
