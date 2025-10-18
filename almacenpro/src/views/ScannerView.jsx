@@ -13,12 +13,10 @@ export default function ScannerView({
   manejarGuardarProductoNuevo,
   manejarCancelar,
   manejarEliminar,
+  manejarCambioCantidad,   // 👈 DES-ESTRUCTURADO AQUÍ
   manejarPagar,
   calcularTotal,
   manejarAgregarManual,
-  manejarEditarCantidad,
-  manejarCambioTemporal,
-  manejarConfirmarCantidad,
 }) {
   const [precioManual, setPrecioManual] = useState("");
   const [mostrarInput, setMostrarInput] = useState(false);
@@ -30,9 +28,7 @@ export default function ScannerView({
   }, []);
 
   useEffect(() => {
-    if (mostrarInput) {
-      setTimeout(() => inputPrecioRef.current?.focus(), 100);
-    }
+    if (mostrarInput) setTimeout(() => inputPrecioRef.current?.focus(), 100);
   }, [mostrarInput]);
 
   const volverAFocoEscaner = () => {
@@ -52,7 +48,7 @@ export default function ScannerView({
               onProductoNoEncontrado={manejarProductoNoEncontrado}
             />
 
-            {/* Agregar producto manual */}
+            {/* Agregar manual */}
             <div className="d-flex justify-content-center mt-3">
               {!mostrarInput ? (
                 <button
@@ -110,7 +106,7 @@ export default function ScannerView({
           <div className="col-md-10 mx-auto">
             <h3>Lista de productos</h3>
             {carrito.length === 0 ? (
-              <p>No hay producto escaneados</p>
+              <p>No hay productos escaneados</p>
             ) : (
               <>
                 <table className="table table-dark table-striped align-middle">
@@ -125,33 +121,29 @@ export default function ScannerView({
                     </tr>
                   </thead>
                   <tbody>
-                    {carrito.map((p) => (
-                      <tr key={p.barcode}>
+                    {carrito.map((p, idx) => (
+                      <tr key={`${p.barcode}-${idx}`}>
                         <td>
                           {p.image && (
                             <img
                               src={p.image}
                               alt={p.name}
-                              style={{
-                                width: "50px",
-                                height: "50px",
-                                objectFit: "cover",
-                              }}
+                              style={{ width: 50, height: 50, objectFit: "cover" }}
                             />
                           )}
                         </td>
                         <td>{p.name}</td>
                         <td>${p.price}</td>
 
-                        {/* 👇 NUEVA COLUMNA DE CANTIDAD TÁCTIL */}
+                        {/* Cantidad táctil */}
                         <td>
-                          <div className="d-flex align-items-center justify-content-center gap-2">
+                          <div
+                            className="d-flex align-items-center justify-content-center gap-2"
+                            style={{ touchAction: "manipulation" }}
+                          >
                             <button
                               className="btn btn-sm btn-secondary"
-                              style={{
-                                fontSize: "1.4rem",
-                                padding: "0.4rem 0.8rem",
-                              }}
+                              style={{ fontSize: "1.6rem", padding: "0.5rem 0.9rem" }}
                               onClick={() =>
                                 p.cantidad > 1 &&
                                 manejarCambioCantidad(p.barcode, p.cantidad - 1)
@@ -162,8 +154,8 @@ export default function ScannerView({
 
                             <span
                               style={{
-                                fontSize: "1.5rem",
-                                minWidth: "50px",
+                                fontSize: "1.6rem",
+                                minWidth: 50,
                                 textAlign: "center",
                                 display: "inline-block",
                               }}
@@ -173,10 +165,7 @@ export default function ScannerView({
 
                             <button
                               className="btn btn-sm btn-success"
-                              style={{
-                                fontSize: "1.4rem",
-                                padding: "0.4rem 0.8rem",
-                              }}
+                              style={{ fontSize: "1.6rem", padding: "0.5rem 0.9rem" }}
                               onClick={() =>
                                 manejarCambioCantidad(p.barcode, p.cantidad + 1)
                               }
@@ -198,7 +187,6 @@ export default function ScannerView({
                       </tr>
                     ))}
                   </tbody>
-
 
                   <tfoot>
                     <tr>
