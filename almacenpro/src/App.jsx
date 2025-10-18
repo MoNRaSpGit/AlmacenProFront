@@ -4,7 +4,7 @@ import ScannerPage from "./pages/ScannerPage";
 import Caja from "./pages/Caja";
 import Pagos from "./pages/Pagos";
 import ControlStock from "./pages/ControlStock";
-import ImprimirQZ from "./pages/ImprimirQZ";
+
 
 
 export default function App() {
@@ -59,7 +59,7 @@ export default function App() {
           <Route path="/caja" element={<Caja />} />
           <Route path="/pagos" element={<Pagos />} />
           <Route path="/stock" element={<ControlStock />} />
-          <Route path="/imprimir" element={<ImprimirQZ />} />
+          
 
 
         </Routes>
