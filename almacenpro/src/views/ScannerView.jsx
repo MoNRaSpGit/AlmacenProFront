@@ -143,52 +143,49 @@ export default function ScannerView({
                         <td>{p.name}</td>
                         <td>${p.price}</td>
 
+                        {/* 👇 NUEVA COLUMNA DE CANTIDAD TÁCTIL */}
                         <td>
-                          {p.editando ? (
-                            <div className="d-flex align-items-center gap-2">
-                              <input
-                                ref={(el) => {
-                                  // 👇 Enfoca automáticamente para abrir teclado táctil
-                                  if (el) {
-                                    setTimeout(() => el.focus(), 50);
-                                  }
-                                }}
-                                type="number"
-                                inputMode="numeric"
-                                pattern="[0-9]*"
-                                min="1"
-                                className="form-control form-control-sm text-center"
-                                style={{ width: "90px", fontSize: "1.2rem" }}
-                                value={p.cantidadTemp ?? p.cantidad}
-                                onChange={(e) => {
-                                  // 👇 Permite dejar vacío mientras escribe
-                                  const val = e.target.value;
-                                  manejarCambioTemporal(p.barcode, val === "" ? "" : Number(val));
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") manejarConfirmarCantidad(p.barcode);
-                                }}
-                              />
-                              <button
-                                className="btn btn-success btn-sm"
-                                onClick={() => manejarConfirmarCantidad(p.barcode)}
-                              >
-                                ✅
-                              </button>
-                            </div>
-                          ) : (
-                            <div
-                              onClick={() => manejarEditarCantidad(p.barcode)}
+                          <div className="d-flex align-items-center justify-content-center gap-2">
+                            <button
+                              className="btn btn-sm btn-secondary"
                               style={{
-                                cursor: "pointer",
-                                userSelect: "none",
-                                fontSize: "1.2rem",
+                                fontSize: "1.4rem",
+                                padding: "0.4rem 0.8rem",
+                              }}
+                              onClick={() =>
+                                p.cantidad > 1 &&
+                                manejarCambioCantidad(p.barcode, p.cantidad - 1)
+                              }
+                            >
+                              ➖
+                            </button>
+
+                            <span
+                              style={{
+                                fontSize: "1.5rem",
+                                minWidth: "50px",
+                                textAlign: "center",
+                                display: "inline-block",
                               }}
                             >
-                              {p.cantidad} ✏️
-                            </div>
-                          )}
+                              {p.cantidad}
+                            </span>
+
+                            <button
+                              className="btn btn-sm btn-success"
+                              style={{
+                                fontSize: "1.4rem",
+                                padding: "0.4rem 0.8rem",
+                              }}
+                              onClick={() =>
+                                manejarCambioCantidad(p.barcode, p.cantidad + 1)
+                              }
+                            >
+                              ➕
+                            </button>
+                          </div>
                         </td>
+
                         <td>${(p.price * p.cantidad).toFixed(2)}</td>
                         <td>
                           <button
@@ -201,6 +198,7 @@ export default function ScannerView({
                       </tr>
                     ))}
                   </tbody>
+
 
                   <tfoot>
                     <tr>

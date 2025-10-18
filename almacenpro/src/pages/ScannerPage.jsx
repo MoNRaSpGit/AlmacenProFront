@@ -74,37 +74,12 @@ export default function ScannerPage() {
     });
   };
 
-  // ✏️ Editar cantidad (modo tablet)
-  const manejarEditarCantidad = (barcode) => {
+  // 🔢 Cambiar cantidad desde botones ➕ / ➖
+  const manejarCambioCantidad = (barcode, nuevaCantidad) => {
     setCarrito((prev) =>
       prev.map((p) =>
         p.barcode === barcode
-          ? { ...p, editando: true, cantidadTemp: p.cantidad }
-          : p
-      )
-    );
-  };
-
-  const manejarCambioTemporal = (barcode, valor) => {
-    const num = Number(valor);
-    if (isNaN(num) || num < 0) return;
-    setCarrito((prev) =>
-      prev.map((p) =>
-        p.barcode === barcode ? { ...p, cantidadTemp: num } : p
-      )
-    );
-  };
-
-  const manejarConfirmarCantidad = (barcode) => {
-    setCarrito((prev) =>
-      prev.map((p) =>
-        p.barcode === barcode
-          ? {
-              ...p,
-              cantidad: p.cantidadTemp > 0 ? p.cantidadTemp : p.cantidad,
-              editando: false,
-              cantidadTemp: undefined,
-            }
+          ? { ...p, cantidad: nuevaCantidad }
           : p
       )
     );
@@ -126,7 +101,6 @@ export default function ScannerPage() {
         }));
 
         await registrarVenta(total, productosFormateados);
-
         setCarrito([]);
         setProductoSeleccionado(null);
         setNotificacion({
@@ -142,7 +116,7 @@ export default function ScannerPage() {
     }
   };
 
-  // 🧾 Producto manual
+  // 🧾 Agregar producto manual
   const ID_PRODUCTO_MANUAL = 1689;
   const manejarAgregarManual = (precio) => {
     if (!precio || precio <= 0) return alert("Ingrese un precio válido");
@@ -168,12 +142,11 @@ export default function ScannerPage() {
         manejarGuardarProductoNuevo={manejarGuardarProductoNuevo}
         manejarCancelar={manejarCancelar}
         manejarEliminar={manejarEliminar}
+        manejarCambioCantidad={manejarCambioCantidad}
         manejarPagar={manejarPagar}
         calcularTotal={calcularTotal}
         manejarAgregarManual={manejarAgregarManual}
-        manejarEditarCantidad={manejarEditarCantidad}
-        manejarCambioTemporal={manejarCambioTemporal}
-        manejarConfirmarCantidad={manejarConfirmarCantidad}
+        volverAFocoEscaner={() => {}}
       />
 
       {notificacion && (
