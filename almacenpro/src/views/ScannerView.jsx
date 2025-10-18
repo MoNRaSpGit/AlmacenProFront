@@ -110,7 +110,7 @@ export default function ScannerView({
           <div className="col-md-10 mx-auto">
             <h3>Lista de productos</h3>
             {carrito.length === 0 ? (
-              <p>No hay productos escaneados</p>
+              <p>No hay producto escaneados</p>
             ) : (
               <>
                 <table className="table table-dark table-striped align-middle">
