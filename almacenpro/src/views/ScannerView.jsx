@@ -26,11 +26,11 @@ export default function ScannerView({
   }, []);
 
   useEffect(() => {
-    if (mostrarInput) setTimeout(() => inputPrecioRef.current?.focus(), 200);
+    if (mostrarInput) setTimeout(() => inputPrecioRef.current?.focus(), 100);
   }, [mostrarInput]);
 
   const volverAFocoEscaner = () => {
-    setTimeout(() => inputEscanerRef.current?.focus(), 200);
+    setTimeout(() => inputEscanerRef.current?.focus(), 150);
   };
 
   return (
@@ -50,73 +50,52 @@ export default function ScannerView({
             />
 
             {/* ➕ Agregar manual */}
-            <div className="d-flex justify-content-center mt-4">
+            <div className="d-flex justify-content-center mt-3">
               {!mostrarInput ? (
                 <button
-                  className="btn btn-warning btn-lg px-5 py-3"
-                  style={{ fontSize: "1.5rem" }}
+                  className="btn btn-warning btn-lg px-4 py-3"
+                  style={{ fontSize: "1.3rem" }}
                   onClick={() => {
                     setMostrarInput(true);
-                    setTimeout(() => inputPrecioRef.current?.focus(), 200);
+                    setTimeout(() => inputPrecioRef.current?.focus(), 100); // 🧠 fuerza el foco
                   }}
                 >
                   ➕ Agregar manual
                 </button>
               ) : (
-                <div
-                  className="input-group w-75 d-flex justify-content-center align-items-center"
-                  style={{ gap: "25px" }}
-                >
+                <div className="input-group w-75">
                   <input
                     ref={inputPrecioRef}
                     type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    className="form-control form-control-lg text-center"
+                    inputMode="numeric"           // 🧠 fuerza teclado numérico
+                    pattern="[0-9]*"              // 🧠 mejora compatibilidad
+                    className="form-control form-control-lg"
                     placeholder="Precio"
                     value={precioManual}
                     onChange={(e) => setPrecioManual(e.target.value)}
-                    autoFocus
-                    style={{
-                      fontSize: "1.6rem",
-                      borderRadius: "10px",
-                      padding: "10px",
-                    }}
+                    autoFocus                      // 🔥 ayuda adicional
                   />
-                  <div className="d-flex gap-4">
-                    <button
-                      className="btn btn-success btn-lg px-4 py-3"
-                      style={{
-                        fontSize: "2rem",
-                        borderRadius: "14px",
-                        minWidth: "90px",
-                      }}
-                      onClick={() => {
-                        manejarAgregarManual(precioManual);
-                        setPrecioManual("");
-                        setMostrarInput(false);
-                        volverAFocoEscaner();
-                      }}
-                    >
-                      ✅
-                    </button>
-
-                    <button
-                      className="btn btn-danger btn-lg px-4 py-3"
-                      style={{
-                        fontSize: "2rem",
-                        borderRadius: "14px",
-                        minWidth: "90px",
-                      }}
-                      onClick={() => {
-                        setMostrarInput(false);
-                        setPrecioManual("");
-                        volverAFocoEscaner();
-                      }}
-                    >
-                      ❌
-                    </button>
-                  </div>
+                  <button
+                    className="btn btn-success btn-lg"
+                    onClick={() => {
+                      manejarAgregarManual(precioManual);
+                      setPrecioManual("");
+                      setMostrarInput(false);
+                      volverAFocoEscaner();
+                    }}
+                  >
+                    ✅
+                  </button>
+                  <button
+                    className="btn btn-secondary btn-lg"
+                    onClick={() => {
+                      setMostrarInput(false);
+                      setPrecioManual("");
+                      volverAFocoEscaner();
+                    }}
+                  >
+                    ❌
+                  </button>
                 </div>
               )}
             </div>
@@ -163,7 +142,7 @@ export default function ScannerView({
                         </td>
                         <td>${p.price}</td>
 
-                        {/* 👉 Cantidad táctil */}
+                        {/* 👉 Cantidad como botón táctil */}
                         <td>
                           <div
                             onClick={() =>
