@@ -128,6 +128,7 @@ export default function ScannerView({
                   </div>
                 </div>
               )}
+
             </div>
           </div>
         </div>
