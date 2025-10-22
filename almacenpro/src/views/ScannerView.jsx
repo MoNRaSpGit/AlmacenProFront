@@ -60,7 +60,7 @@ export default function ScannerView({
                     setTimeout(() => inputPrecioRef.current?.focus(), 200);
                   }}
                 >
-                  ➕ Agregar manual
+                  ➕ Agregar Manual
                 </button>
               ) : (
                 <div
