@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { obtenerProductoPorCodigo } from "../services/api";
 
 export default function EntradaEscaner({
-  inputRef, // 👈 referencia del ScannerView
+  inputRef, // 👈 referencia desde ScannerView
   onProductoEncontrado,
   onProductoNoEncontrado,
 }) {
@@ -14,7 +14,7 @@ export default function EntradaEscaner({
     const codigoTrim = codigo.trim();
     if (!codigoTrim) return;
 
-    // Evita doble lectura inmediata
+    // Evita doble lectura inmediata del escáner
     if (ultimoCodigo.current === codigoTrim) return;
     ultimoCodigo.current = codigoTrim;
 
@@ -31,14 +31,16 @@ export default function EntradaEscaner({
     setTimeout(() => (ultimoCodigo.current = null), 300);
   };
 
-  // 🔊 beep simple de éxito/error
+  // 🔊 beep de éxito o error
   const reproducirBeep = (exito = true) => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+
     osc.type = "sine";
     osc.frequency.value = exito ? 880 : 220;
     gain.gain.value = 0.1;
+
     osc.connect(gain);
     gain.connect(ctx.destination);
     osc.start();
@@ -55,11 +57,13 @@ export default function EntradaEscaner({
         value={codigo}
         onChange={(e) => setCodigo(e.target.value)}
         autoFocus
-        inputMode="none" // 🚫 evita que el teclado se abra en tablets
+        inputMode="none" // 🚫 no mostrar teclado virtual
         onFocus={(e) => {
-          // 🧠 Truco: bloquear teclado momentáneamente
+          // ⚙️ truco universal para tablets Android
           e.target.setAttribute("readonly", "readonly");
-          setTimeout(() => e.target.removeAttribute("readonly"), 100);
+          setTimeout(() => {
+            e.target.removeAttribute("readonly");
+          }, 200);
         }}
       />
       <button className="btn btn-primary" type="submit">
