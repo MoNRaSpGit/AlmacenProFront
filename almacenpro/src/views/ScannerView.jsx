@@ -96,7 +96,7 @@ export default function ScannerView({
           </div>
         </div>
 
-        {/* 🧾 Lista del carrito (solo esta parte visible) */}
+        {/* 🧾 Lista del carrito */}
         <div className="row">
           <div className="col-12 px-3">
             {carrito.length === 0 ? (
@@ -110,7 +110,7 @@ export default function ScannerView({
               <>
                 <table
                   className="table table-dark table-striped table-bordered align-middle text-center shadow-lg"
-                  style={{ fontSize: "1.5rem" }}
+                  style={{ fontSize: "1.6rem" }}
                 >
                   <thead>
                     <tr style={{ backgroundColor: "#222" }}>
@@ -129,56 +129,31 @@ export default function ScannerView({
                           style={{
                             fontWeight: "bold",
                             textAlign: "left",
-                            fontSize: "1.4rem",
+                            fontSize: "1.5rem",
                           }}
                         >
                           {p.name}
                         </td>
                         <td>${p.price}</td>
 
-                        {/* 🔢 Controles táctiles ➕ ➖ */}
+                        {/* 👉 Cantidad como botón táctil */}
                         <td>
                           <div
-                            className="d-flex align-items-center justify-content-center gap-3"
-                            style={{ touchAction: "manipulation" }}
+                            onClick={() =>
+                              manejarCambioCantidad(p.barcode, p.cantidad + 1)
+                            }
+                            style={{
+                              backgroundColor: "#444",
+                              borderRadius: "8px",
+                              cursor: "pointer",
+                              userSelect: "none",
+                              fontSize: "2rem",
+                              padding: "0.4rem 0.9rem",
+                              minWidth: "70px",
+                              display: "inline-block",
+                            }}
                           >
-                            <button
-                              className="btn btn-secondary btn-lg"
-                              style={{
-                                fontSize: "1.8rem",
-                                padding: "0.4rem 0.9rem",
-                              }}
-                              onClick={() =>
-                                p.cantidad > 1 &&
-                                manejarCambioCantidad(p.barcode, p.cantidad - 1)
-                              }
-                            >
-                              ➖
-                            </button>
-
-                            <span
-                              style={{
-                                fontSize: "1.8rem",
-                                minWidth: 60,
-                                display: "inline-block",
-                                textAlign: "center",
-                              }}
-                            >
-                              {p.cantidad}
-                            </span>
-
-                            <button
-                              className="btn btn-success btn-lg"
-                              style={{
-                                fontSize: "1.8rem",
-                                padding: "0.4rem 0.9rem",
-                              }}
-                              onClick={() =>
-                                manejarCambioCantidad(p.barcode, p.cantidad + 1)
-                              }
-                            >
-                              ➕
-                            </button>
+                            {p.cantidad}
                           </div>
                         </td>
 
@@ -186,7 +161,7 @@ export default function ScannerView({
                         <td>
                           <button
                             className="btn btn-danger btn-lg"
-                            style={{ fontSize: "1.5rem" }}
+                            style={{ fontSize: "1.4rem" }}
                             onClick={() => manejarEliminar(p.barcode)}
                           >
                             ❌
