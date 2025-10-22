@@ -66,14 +66,19 @@ export default function ScannerView({
                 <div className="input-group w-75">
                   <input
                     ref={inputPrecioRef}
-                    type="text"
-                    inputMode="numeric"           // 🧠 fuerza teclado numérico
-                    pattern="[0-9]*"              // 🧠 mejora compatibilidad
+                    type="number"                // ✅ cambia de text → number (abre teclado numérico real)
+                    inputMode="decimal"          // ✅ mejor soporte en tablets Android
+                    pattern="[0-9]*"
                     className="form-control form-control-lg"
                     placeholder="Precio"
                     value={precioManual}
                     onChange={(e) => setPrecioManual(e.target.value)}
-                    autoFocus                      // 🔥 ayuda adicional
+                    autoFocus
+                    style={{
+                      fontSize: "1.4rem",
+                      height: "60px",
+                      textAlign: "center",
+                    }}
                   />
                   <button
                     className="btn btn-success btn-lg"
