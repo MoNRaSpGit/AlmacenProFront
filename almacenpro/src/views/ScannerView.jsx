@@ -55,7 +55,10 @@ export default function ScannerView({
                 <button
                   className="btn btn-warning btn-lg px-4 py-3"
                   style={{ fontSize: "1.3rem" }}
-                  onClick={() => setMostrarInput(true)}
+                  onClick={() => {
+                    setMostrarInput(true);
+                    setTimeout(() => inputPrecioRef.current?.focus(), 100); // 🧠 fuerza el foco
+                  }}
                 >
                   ➕ Agregar manual
                 </button>
@@ -63,11 +66,14 @@ export default function ScannerView({
                 <div className="input-group w-75">
                   <input
                     ref={inputPrecioRef}
-                    type="number"
+                    type="text"
+                    inputMode="numeric"           // 🧠 fuerza teclado numérico
+                    pattern="[0-9]*"              // 🧠 mejora compatibilidad
                     className="form-control form-control-lg"
                     placeholder="Precio"
                     value={precioManual}
                     onChange={(e) => setPrecioManual(e.target.value)}
+                    autoFocus                      // 🔥 ayuda adicional
                   />
                   <button
                     className="btn btn-success btn-lg"
