@@ -53,49 +53,79 @@ export default function ScannerView({
             <div className="d-flex justify-content-center mt-3">
               {!mostrarInput ? (
                 <button
-                  className="btn btn-warning btn-lg px-4 py-3"
-                  style={{ fontSize: "1.3rem" }}
+                  className="btn btn-warning btn-lg px-5 py-3"
+                  style={{ fontSize: "1.6rem", borderRadius: "12px" }}
                   onClick={() => {
                     setMostrarInput(true);
-                    setTimeout(() => inputPrecioRef.current?.focus(), 100); // 🧠 fuerza el foco
+                    setTimeout(() => inputPrecioRef.current?.focus(), 200);
                   }}
                 >
                   ➕ Agregar manual
                 </button>
               ) : (
-                <div className="input-group w-75">
+                <div
+                  className="input-group d-flex flex-column align-items-center mt-3"
+                  style={{ gap: "20px" }}
+                >
                   <input
                     ref={inputPrecioRef}
                     type="text"
-                    inputMode="numeric"           // 🧠 fuerza teclado numérico
-                    pattern="[0-9]*"              // 🧠 mejora compatibilidad
-                    className="form-control form-control-lg"
-                    placeholder="Precio"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className="form-control text-center"
+                    placeholder="💰 Precio"
                     value={precioManual}
                     onChange={(e) => setPrecioManual(e.target.value)}
-                    autoFocus                      // 🔥 ayuda adicional
+                    autoFocus
+                    style={{
+                      fontSize: "2rem",
+                      width: "80%",
+                      height: "70px",
+                      borderRadius: "10px",
+                      textAlign: "center",
+                    }}
                   />
-                  <button
-                    className="btn btn-success btn-lg"
-                    onClick={() => {
-                      manejarAgregarManual(precioManual);
-                      setPrecioManual("");
-                      setMostrarInput(false);
-                      volverAFocoEscaner();
-                    }}
+
+                  {/* 🔘 Botones grandes y separados */}
+                  <div
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ gap: "40px" }}
                   >
-                    ✅
-                  </button>
-                  <button
-                    className="btn btn-secondary btn-lg"
-                    onClick={() => {
-                      setMostrarInput(false);
-                      setPrecioManual("");
-                      volverAFocoEscaner();
-                    }}
-                  >
-                    ❌
-                  </button>
+                    <button
+                      className="btn btn-success"
+                      style={{
+                        fontSize: "2.5rem",
+                        padding: "20px 30px",
+                        borderRadius: "14px",
+                        minWidth: "100px",
+                      }}
+                      onClick={() => {
+                        manejarAgregarManual(precioManual);
+                        setPrecioManual("");
+                        setMostrarInput(false);
+                        volverAFocoEscaner();
+                      }}
+                    >
+                      ✅
+                    </button>
+
+                    <button
+                      className="btn btn-danger"
+                      style={{
+                        fontSize: "2.5rem",
+                        padding: "20px 30px",
+                        borderRadius: "14px",
+                        minWidth: "100px",
+                      }}
+                      onClick={() => {
+                        setMostrarInput(false);
+                        setPrecioManual("");
+                        volverAFocoEscaner();
+                      }}
+                    >
+                      ❌
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
