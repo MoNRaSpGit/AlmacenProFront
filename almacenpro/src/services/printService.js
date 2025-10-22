@@ -18,7 +18,7 @@ export function printWithRawBT(ticketTexto) {
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
   let texto = "";
-  texto += "      🏪 ALMACÉN PRO      \n";
+  texto += "    🏪 kIOSCO PILOTO     \n";
   texto += "------------------------------\n";
   texto += "Producto                Precio\n";
   texto += "------------------------------\n";
