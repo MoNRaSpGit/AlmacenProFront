@@ -21,19 +21,17 @@ export function printWithRawBT(ticketTexto) {
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
   const ANCHO_TOTAL = 32;
+  const FEED_LINEAS = 8; // ⬅️ cantidad de líneas en blanco al final
 
-  // mismo margen que usás en el resto del ticket
-  const margen = (texto) => "   " + texto; // 3 espacios
+  const margen = (texto) => "   " + texto; // mismo margen
+  const centrar = (texto) => {
+    const esp = Math.max(0, Math.floor((ANCHO_TOTAL - texto.length) / 2));
+    return " ".repeat(esp) + texto;
+  };
 
   let texto = "";
-
-  // 👉 salto de línea para empujar cualquier “//print…” a la línea anterior
-  texto += "\n";
-
-  // 👉 encabezado alineado a la izquierda, donde empieza la columna de Producto
+  texto += "\n"; // empuja posibles prefijos del intent a la línea anterior
   texto += margen("KIOSCO PILOTO") + "\n";
-
-  // líneas y tabla
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
   texto += margen("Producto        Cant   Precio") + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
@@ -48,16 +46,15 @@ export function generarTicketTexto(items) {
   }
 
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
-
-  // total centrado pero respetando el mismo margen visual
-  const totalTexto = `TOTAL: $${total.toFixed(2)}`;
-  const espacios = Math.max(0, Math.floor((ANCHO_TOTAL - totalTexto.length) / 2));
-  texto += margen(" ".repeat(espacios) + totalTexto) + "\n";
-
+  texto += margen(centrar(`TOTAL: $${total.toFixed(2)}`)) + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
   texto += margen(`Fecha: ${fecha}`) + "\n";
-  texto += margen("Gracias por sus compra!") + "\n\n\n";
+  texto += margen("Gracias por su compra!") + "\n";
+
+  // ⬇️ Alimenta papel: agrega líneas en blanco
+  texto += "\n".repeat(FEED_LINEAS);
 
   return texto;
 }
+
 
