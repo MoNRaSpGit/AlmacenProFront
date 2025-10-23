@@ -1,44 +1,33 @@
-// ==============================
-//  Servicio de impresión con RawBT
-// ==============================
-
-//  Función principal para imprimir un ticket desde RawBT
 export function printWithRawBT(ticketTexto) {
   try {
     const encoded = encodeURIComponent(ticketTexto.trim());
-    const rawbtUrl = `rawbt://print?data=${encoded}`;
-    window.location.href = rawbtUrl;
+    const intentUrl = `intent://rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
+    window.location.href = intentUrl;
   } catch (error) {
-    console.error("❌ Error enviando a RawBT:", error);
+    console.error("Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
 
-//  Helper: genera texto del ticket a partir del carrito
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
-
-  //  Ancho total estándar para papel de 80 mm → 32 caracteres aprox.
   const ANCHO_TOTAL = 32;
 
-  // Centrar texto
   const centrar = (texto) => {
     const espacios = Math.max(0, Math.floor((ANCHO_TOTAL - texto.length) / 2));
     return " ".repeat(espacios) + texto;
   };
 
-  // Márgenes laterales (para que no imprima tan pegado al borde)
-  const margen = (texto) => "   " + texto; // 3 espacios de margen
+  const margen = (texto) => "   " + texto;
 
   let texto = "";
-
-  // 🧾 Cabecera removida: no mostramos el título ni la línea inicial
+  texto += margen(centrar("KIOSCO PILOTO")) + "\n";
+  texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
   texto += margen("Producto        Cant   Precio") + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
 
   let total = 0;
   for (const item of items) {
-    //  Ajuste de columnas (alineado perfecto)
     const nombre = item.name.slice(0, 14).padEnd(14, " ");
     const cantidad = String(item.cantidad).padStart(4, " ");
     const precio = (item.price * item.cantidad).toFixed(2).padStart(10, " ");
@@ -48,7 +37,6 @@ export function generarTicketTexto(items) {
 
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
 
-  //  Centrar TOTAL
   const totalTexto = `TOTAL: $${total.toFixed(2)}`;
   texto += margen(centrar(totalTexto)) + "\n";
 
