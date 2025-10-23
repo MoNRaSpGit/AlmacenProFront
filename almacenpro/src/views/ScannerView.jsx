@@ -173,10 +173,11 @@ export default function ScannerView({
                           <button
                             className="btn btn-danger btn-lg"
                             style={{ fontSize: "1.4rem" }}
-                            onClick={() => manejarEliminar(p.barcode)}
+                            onClick={() => manejarEliminar(p.id)} // 👈 ahora pasa el id
                           >
                             ❌
                           </button>
+
                         </td>
                       </tr>
                     ))}

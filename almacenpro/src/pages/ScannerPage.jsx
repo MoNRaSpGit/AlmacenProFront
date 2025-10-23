@@ -59,21 +59,22 @@ export default function ScannerPage() {
   };
 
   // 🗑️ Eliminar producto o reducir cantidad
-  const manejarEliminar = (barcode) => {
-    setCarrito((prev) => {
-      const index = prev.findIndex((p) => p.barcode === barcode);
-      if (index >= 0) {
-        const actualizado = [...prev];
-        if (actualizado[index].cantidad > 1) {
-          actualizado[index].cantidad -= 1;
-          return actualizado;
-        } else {
-          return actualizado.filter((p) => p.barcode !== barcode);
-        }
+const manejarEliminar = (id) => {
+  setCarrito((prev) => {
+    const index = prev.findIndex((p) => p.id === id);
+    if (index >= 0) {
+      const actualizado = [...prev];
+      if (actualizado[index].cantidad > 1) {
+        actualizado[index].cantidad -= 1;
+        return actualizado;
+      } else {
+        return actualizado.filter((p) => p.id !== id);
       }
-      return prev;
-    });
-  };
+    }
+    return prev;
+  });
+};
+
 
   // 🔢 Cambiar cantidad
   const manejarCambioCantidad = (barcode, nuevaCantidad) => {
@@ -122,18 +123,18 @@ export default function ScannerPage() {
   };
 
   // 🧾 Agregar producto manual
-  const ID_PRODUCTO_MANUAL = 1689;
-  const manejarAgregarManual = (precio) => {
-    if (!precio || precio <= 0) return alert("Ingrese un precio válido");
-    const productoManual = {
-      id: ID_PRODUCTO_MANUAL,
-      name: "Producto manual",
-      price: Number(precio),
-      barcode: "manual",
-      cantidad: 1,
-    };
-    setCarrito((prev) => [...prev, productoManual]);
+ 
+const manejarAgregarManual = (precio) => {
+  if (!precio || precio <= 0) return alert("Ingrese un precio válido");
+  const productoManual = {
+    id: Date.now(), // 👈 ID único
+    name: "Producto manual",
+    price: Number(precio),
+    barcode: "manual", // sigue igual, no hay problema
+    cantidad: 1,
   };
+  setCarrito((prev) => [...prev, productoManual]);
+};
 
   return (
     <>
