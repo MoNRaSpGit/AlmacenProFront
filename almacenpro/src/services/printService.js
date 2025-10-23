@@ -1,13 +1,14 @@
 export function printWithRawBT(ticketTexto) {
   try {
     const encoded = encodeURIComponent(ticketTexto.trim());
-    const intentUrl = `intent://rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
+    const intentUrl = `intent://print/#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;S.data=${encoded};end`;
     window.location.href = intentUrl;
   } catch (error) {
-    console.error("Error enviando a RawBT:", error);
+    console.error("Error al enviar a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
