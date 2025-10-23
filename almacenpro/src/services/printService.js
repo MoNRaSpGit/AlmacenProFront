@@ -4,15 +4,25 @@
 
 export function printWithRawBT(ticketTexto) {
   try {
-    const encoded = encodeURIComponent(ticketTexto.trim());
-    
-   window.open(`${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`, "_system");
+    const form = document.createElement("form");
+    form.method = "GET";
+    form.action = "rawbt://print";
 
-  } catch (error) {
-    console.error("❌ Error enviando a RawBT:", error);
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "text";                    // clave: usar text= (no data=)
+    input.value = ticketTexto.trim();       // sin encodeURIComponent
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  } catch (e) {
+    console.error("Error RawBT:", e);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 
 // Generador del texto del ticket
