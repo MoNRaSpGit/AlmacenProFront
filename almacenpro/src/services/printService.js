@@ -4,24 +4,18 @@
 
 export function printWithRawBT(ticketTexto) {
   try {
-    const form = document.createElement("form");
-    form.method = "GET";
-    form.action = "rawbt://print";
-
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = "text";                    // clave: usar text= (no data=)
-    input.value = ticketTexto.trim();       // sin encodeURIComponent
-
-    form.appendChild(input);
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
+    const a = document.createElement("a");
+    a.href = "rawbt://print?text=" + encodeURIComponent(ticketTexto.trim());
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();                    // algunos navegadores manejan distinto el click vs. location.href
+    document.body.removeChild(a);
   } catch (e) {
     console.error("Error RawBT:", e);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 
 
