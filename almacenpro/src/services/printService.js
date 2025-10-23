@@ -5,7 +5,8 @@ export function printWithRawBT(ticketTexto) {
     const encoded = encodeURIComponent(cleanText);
 
     // ✅ Esquema más estable: usa "intent:rawbt?data" con data= en lugar de S.data
-    const intentUrl = `intent:rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
+    const intentUrl = `intent://print/#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;S.text=${encoded};end`;
+
 
     // Abre RawBT directamente sin mostrar la URL
     window.location.replace(intentUrl);
