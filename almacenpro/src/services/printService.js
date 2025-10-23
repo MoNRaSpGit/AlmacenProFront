@@ -56,7 +56,7 @@ export function generarTicketTexto(items) {
 
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
   texto += margen(`Fecha: ${fecha}`) + "\n";
-  texto += margen("Gracias por su compra!") + "\n\n\n";
+  texto += margen("Gracias por sus compra!") + "\n\n\n";
 
   return texto;
 }
