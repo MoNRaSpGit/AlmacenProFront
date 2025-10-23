@@ -5,13 +5,14 @@
 export function printWithRawBT(ticketTexto) {
   try {
     const encoded = encodeURIComponent(ticketTexto.trim());
-    const intentUrl = `intent://print/#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;S.text=${encoded};end`;
-    window.location.href = intentUrl;
+    const rawbtUrl = `rawbt://print?text=${encoded}`;
+    window.location.href = rawbtUrl;
   } catch (error) {
     console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 // Generador del texto del ticket
 export function generarTicketTexto(items) {
