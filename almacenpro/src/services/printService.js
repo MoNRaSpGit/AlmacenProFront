@@ -32,13 +32,10 @@ export function generarTicketTexto(items) {
   };
 
   // Márgenes laterales (para que no imprima tan pegado al borde)
-  const margen = (texto) => "   " + texto; // 3 espacios de margen
+ // const margen = (texto) => "   " + texto; // 3 espacios de margen
 
   let texto = "";
-  texto += margen(centrar("KIOSCO PILOTOs")) + "\n";
-  texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
-  texto += margen("Producto        Cant   Precio") + "\n";
-  texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
+
 
   let total = 0;
   for (const item of items) {
