@@ -2,50 +2,56 @@
 // 📱 Servicio de impresión con RawBT
 // ==============================
 
-// 🧾 Enviar ticket a la app RawBT
+// 🧾 Función principal para imprimir un ticket desde RawBT
 export function printWithRawBT(ticketTexto) {
   try {
-    const encoded = encodeURIComponent(ticketTexto);
-    const rawbtUrl = `intent://rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
-    window.location.href = rawbtUrl; // abre RawBT
+    // ✅ Eliminamos cualquier prefijo extraño o espacios
+    const cleanText = ticketTexto.trim();
+
+    // ✅ Codificamos solo el texto (sin "intent://" visible)
+    const encoded = encodeURIComponent(cleanText);
+
+    // ✅ RawBT reconoce este formato como texto ESC/POS sin mostrar la URL
+    const rawbtUrl = `intent:rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
+
+    window.location.href = rawbtUrl; // Abre RawBT directamente
   } catch (error) {
     console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
 
-// 🧠 Generar texto del ticket con formato centrado y columna Cantidad
+// 🧠 Helper: genera texto del ticket a partir del carrito
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
 
-  // helper para centrar texto
+  // Utilidad para centrar texto (ancho aproximado 32 caracteres)
   const centrar = (texto) => {
-    const ancho = 32; // ancho estándar para 80mm
+    const ancho = 32;
     const espacios = Math.max(0, Math.floor((ancho - texto.length) / 2));
-    return " ".repeat(espacios) + texto + "\n";
+    return " ".repeat(espacios) + texto;
   };
 
   let texto = "";
-  texto += centrar("🏪 KIOSCO PILOTO 🏪");
-  texto += "--------------------------------\n";
-  texto += "Producto        Cant  Precio\n";
-  texto += "--------------------------------\n";
+  texto += centrar("🏪 KIOSCO PILOTO") + "\n";
+  texto += centrar("------------------------------") + "\n";
+  texto += centrar("Producto       Cant   Precio") + "\n";
+  texto += centrar("------------------------------") + "\n";
 
   let total = 0;
   for (const item of items) {
-    const nombre = item.name.slice(0, 14).padEnd(15, " ");
-    const cantidad = String(item.cantidad || 1).padStart(4, " ");
-    const subtotal = (item.price * item.cantidad).toFixed(2).padStart(8, " ");
-    texto += `${nombre}${cantidad}${subtotal}\n`;
+    const nombre = item.name.slice(0, 14).padEnd(14, " ");
+    const cant = String(item.cantidad).padStart(3, " ");
+    const precio = (item.price * item.cantidad).toFixed(2).padStart(8, " ");
+    texto += `${nombre}${cant}${precio}\n`;
     total += item.price * item.cantidad;
   }
 
-  texto += "--------------------------------\n";
-  texto += `TOTAL:                 $${total.toFixed(2)}\n`;
-  texto += "--------------------------------\n";
-  texto += `Fecha: ${fecha}\n\n`;
-  texto += centrar("¡Gracias por su compra!");
-  texto += "\n\n\n"; // espacio final para corte
+  texto += centrar("------------------------------") + "\n";
+  texto += centrar(`TOTAL: $${total.toFixed(2)}`) + "\n";
+  texto += centrar("------------------------------") + "\n";
+  texto += centrar(`Fecha: ${fecha}`) + "\n\n";
+  texto += centrar("Gracias por su compra!") + "\n\n\n\n";
 
   return texto;
 }
