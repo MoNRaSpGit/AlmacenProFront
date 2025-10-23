@@ -1,21 +1,19 @@
+// ==============================
+// Servicio de impresión con RawBT (versión estable S.text)
+// ==============================
+
 export function printWithRawBT(ticketTexto) {
   try {
-    // Limpia el texto
-    const cleanText = ticketTexto.trim();
-    const encoded = encodeURIComponent(cleanText);
-
-    // ✅ Esquema más estable: usa "intent:rawbt?data" con data= en lugar de S.data
+    const encoded = encodeURIComponent(ticketTexto.trim());
     const intentUrl = `intent://print/#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;S.text=${encoded};end`;
-
-
-    // Abre RawBT directamente sin mostrar la URL
-    window.location.replace(intentUrl);
+    window.location.href = intentUrl;
   } catch (error) {
-    console.error("Error enviando a RawBT:", error);
+    console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
 
+// Generador del texto del ticket
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
   const ANCHO_TOTAL = 32;
@@ -43,8 +41,7 @@ export function generarTicketTexto(items) {
   }
 
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
-  const totalTexto = `TOTAL: $${total.toFixed(2)}`;
-  texto += margen(centrar(totalTexto)) + "\n";
+  texto += margen(centrar(`TOTAL: $${total.toFixed(2)}`)) + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
   texto += margen(`Fecha: ${fecha}`) + "\n";
   texto += margen(centrar("Gracias por su compra!")) + "\n\n\n";
