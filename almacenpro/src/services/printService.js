@@ -7,16 +7,16 @@ export function printWithRawBT(ticketTexto) {
   try {
     const cleanText = ticketTexto.trim();
     const encoded = encodeURIComponent(cleanText);
-
-    // ✅ IMPORTANTE: sin “//” después de intent: (esto elimina el "rawbt?data=" visible)
     const rawbtUrl = `intent:rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
 
-    window.location.href = rawbtUrl; // Abre directamente RawBT sin mostrar la URL
+    // ✅ Evita que el navegador muestre la URL
+    window.open(rawbtUrl, "_self");
   } catch (error) {
     console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 // 🧠 Helper: genera texto del ticket a partir del carrito
 export function generarTicketTexto(items) {
