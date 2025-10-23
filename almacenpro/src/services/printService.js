@@ -23,33 +23,38 @@ export function printWithRawBT(ticketTexto) {
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
 
-  // Utilidad para centrar texto (ancho aproximado 32 caracteres)
+  // 🧮 Ancho total estándar para papel de 80 mm → 32 caracteres
+  const ANCHO_TOTAL = 32;
+
+  // Función para centrar texto en el ancho total
   const centrar = (texto) => {
-    const ancho = 32;
-    const espacios = Math.max(0, Math.floor((ancho - texto.length) / 2));
+    const espacios = Math.max(0, Math.floor((ANCHO_TOTAL - texto.length) / 2));
     return " ".repeat(espacios) + texto;
   };
 
   let texto = "";
   texto += centrar("🏪 KIOSCO PILOTO") + "\n";
-  texto += centrar("------------------------------") + "\n";
-  texto += centrar("Producto       Cant   Precio") + "\n";
-  texto += centrar("------------------------------") + "\n";
+  texto += "-".repeat(ANCHO_TOTAL) + "\n";
+  texto += "Producto        Cant   Precio\n";
+  texto += "-".repeat(ANCHO_TOTAL) + "\n";
 
   let total = 0;
   for (const item of items) {
-    const nombre = item.name.slice(0, 14).padEnd(14, " ");
-    const cant = String(item.cantidad).padStart(3, " ");
-    const precio = (item.price * item.cantidad).toFixed(2).padStart(8, " ");
-    texto += `${nombre}${cant}${precio}\n`;
+    // ✍️ Ajustamos los anchos fijos por columna
+    const nombre = item.name.slice(0, 14).padEnd(14, " "); // 14 caracteres
+    const cantidad = String(item.cantidad).padStart(4, " "); // 4 caracteres
+    const precio = (item.price * item.cantidad).toFixed(2).padStart(10, " "); // 10 caracteres → derecha
+
+    texto += `${nombre}${cantidad}${precio}\n`;
     total += item.price * item.cantidad;
   }
 
-  texto += centrar("------------------------------") + "\n";
-  texto += centrar(`TOTAL: $${total.toFixed(2)}`) + "\n";
-  texto += centrar("------------------------------") + "\n";
-  texto += centrar(`Fecha: ${fecha}`) + "\n\n";
-  texto += centrar("Gracias por su compra!") + "\n\n\n\n";
+  texto += "-".repeat(ANCHO_TOTAL) + "\n";
+  texto += `TOTAL:`.padEnd(ANCHO_TOTAL - 8, " ") + `$${total.toFixed(2)}\n`;
+  texto += "-".repeat(ANCHO_TOTAL) + "\n";
+  texto += `Fecha: ${fecha}\n`;
+  texto += centrar("Gracias por su compra!") + "\n\n\n";
 
   return texto;
 }
+
