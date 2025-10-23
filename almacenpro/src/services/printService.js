@@ -6,19 +6,14 @@
 export function printWithRawBT(ticketTexto) {
   try {
     const encoded = encodeURIComponent(ticketTexto.trim());
-    const url = `intent:rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
-
-    // ✅ Formulario oculto para ejecutar el intent sin mostrar texto
-    const form = document.createElement("form");
-    form.action = url;
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
+    const rawbtUrl = `rawbt://print?data=${encoded}`;
+    window.location.href = rawbtUrl;
   } catch (error) {
     console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 
 
