@@ -14,11 +14,6 @@ export function printWithRawBT(ticketTexto) {
   }
 }
 
-
-
-
-
-
 //  Helper: genera texto del ticket a partir del carrito
 export function generarTicketTexto(items) {
   const fecha = new Date().toLocaleString("es-UY");
@@ -36,8 +31,8 @@ export function generarTicketTexto(items) {
   const margen = (texto) => "   " + texto; // 3 espacios de margen
 
   let texto = "";
-  texto += margen(centrar("KIOSCO PILOTOss")) + "\n";
-  texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
+
+  // 🧾 Cabecera removida: no mostramos el título ni la línea inicial
   texto += margen("Producto        Cant   Precio") + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
 
