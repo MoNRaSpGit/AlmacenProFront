@@ -5,17 +5,21 @@
 //  Función principal para imprimir un ticket desde RawBT
 export function printWithRawBT(ticketTexto) {
   try {
-    const cleanText = ticketTexto.trim();
-    const encoded = encodeURIComponent(cleanText);
-    const rawbtUrl = `intent:rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
+    const encoded = encodeURIComponent(ticketTexto.trim());
+    const url = `intent:rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
 
-    // ✅ Evita que el navegador muestre la URL
-    window.open(rawbtUrl, "_self");
+    // ✅ Formulario oculto para ejecutar el intent sin mostrar texto
+    const form = document.createElement("form");
+    form.action = url;
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
   } catch (error) {
     console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 
 
@@ -37,7 +41,7 @@ export function generarTicketTexto(items) {
   const margen = (texto) => "   " + texto; // 3 espacios de margen
 
   let texto = "";
-  texto += margen(centrar("KIOSCO PILOTOs")) + "\n";
+  texto += margen(centrar("KIOSCO PILOTOss")) + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
   texto += margen("Producto        Cant   Precio") + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
