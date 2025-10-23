@@ -5,21 +5,19 @@
 // 🧾 Función principal para imprimir un ticket desde RawBT
 export function printWithRawBT(ticketTexto) {
   try {
-    // ✅ Eliminamos cualquier prefijo extraño o espacios
     const cleanText = ticketTexto.trim();
-
-    // ✅ Codificamos solo el texto (sin "intent://" visible)
     const encoded = encodeURIComponent(cleanText);
 
-    // ✅ RawBT reconoce este formato como texto ESC/POS sin mostrar la URL
+    // ✅ La forma correcta que evita mostrar "rawbt?data="
     const rawbtUrl = `intent:rawbt?data=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`;
 
-    window.location.href = rawbtUrl; // Abre RawBT directamente
+    window.location.href = rawbtUrl;
   } catch (error) {
     console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
   }
 }
+
 
 // 🧠 Helper: genera texto del ticket a partir del carrito
 export function generarTicketTexto(items) {
