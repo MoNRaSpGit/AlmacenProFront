@@ -5,8 +5,9 @@
 export function printWithRawBT(ticketTexto) {
   try {
     const encoded = encodeURIComponent(ticketTexto.trim());
-    const rawbtUrl = `rawbt://print?text=${encoded}`;
-    window.location.href = rawbtUrl;
+    
+    window.open(`intent://print?text=${encoded}#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end`, "_system");
+
   } catch (error) {
     console.error("❌ Error enviando a RawBT:", error);
     alert("Error al imprimir con RawBT");
