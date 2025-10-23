@@ -35,7 +35,7 @@ export function generarTicketTexto(items) {
   const margen = (texto) => "   " + texto; // 3 espacios de margen
 
   let texto = "";
-  texto += margen(centrar("KIOSCO PILOTO")) + "\n";
+  texto += margen(centrar("KIOSCO PILOTOs")) + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
   texto += margen("Producto        Cant   Precio") + "\n";
   texto += margen("-".repeat(ANCHO_TOTAL)) + "\n";
