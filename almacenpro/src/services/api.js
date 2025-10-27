@@ -74,3 +74,12 @@ export async function obtenerMovimientos() {
   const res = await axios.get(`${API_URL}/api/caja/movimientos`);
   return res.data;
 }
+
+
+
+//pedidos
+export async function obtenerPedidos() {
+  // Espera que el backend sirva: GET /api/pedidos
+  const res = await axios.get(`${API_URL}/api/pedidos`);
+  return res.data; // debería ser un array de pedidos
+}
